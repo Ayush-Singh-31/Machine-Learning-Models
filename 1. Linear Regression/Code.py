@@ -3,12 +3,12 @@ import random
 class LinearRegression:
     def __init__(self):
         self.path = None
-        self.data = []           # list of rows (each row: list of floats)
-        self.features = []       # list of column names (including the target)
-        self.target = None       # name of the target column
-        self.X = []              # feature matrix (list of lists), excludes target
-        self.y = []              # target vector (list of floats)
-        self.parameters = []     # one weight per predictor
+        self.data = []           
+        self.features = []      
+        self.target = None     
+        self.X = []             
+        self.y = []            
+        self.parameters = []    
         self.interceptTerm = 0.0
         self.costFunction = 0.0
         self.learningRate = 0.01
