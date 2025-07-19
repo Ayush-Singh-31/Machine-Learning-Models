@@ -1,3 +1,5 @@
+import random
+
 class LinearRegression:
     def __init__(self):
         self.path = None
@@ -83,32 +85,56 @@ class LinearRegression:
     def batchGradientDescent(self, iterations=1000):
         if not self.parameters:
             self.makeParameters()
-
         self.makeInterceptTerm()
-
         for _ in range(iterations):
             grad_w = [0.0] * len(self.parameters)
             grad_b = 0.0
-
             for xi, yi in zip(self.X, self.y):
                 y_pred = sum(p * x for p, x in zip(self.parameters, xi)) + self.interceptTerm
                 error = yi - y_pred
                 grad_b += error
                 for j in range(len(self.parameters)):
                     grad_w[j] += error * xi[j]
-
             for j in range(len(self.parameters)):
                 self.parameters[j] += self.learningRate * grad_w[j]
             self.interceptTerm += self.learningRate * grad_b
             self.makeCostFunction()
         return
+    
+    def stochasticGradientDescent(self, epochs=1000):
+        if not self.parameters:
+            self.makeParameters()
+        self.makeInterceptTerm()
+        n = len(self.X)
+        for _ in range(epochs):
+            combined = list(zip(self.X, self.y))
+            random.shuffle(combined)
+            for xi, yi in combined:
+                y_pred = sum(p * x for p, x in zip(self.parameters, xi)) + self.interceptTerm
+                error = yi - y_pred
+
+                for j in range(len(self.parameters)):
+                    self.parameters[j] += self.learningRate * error * xi[j]
+                self.interceptTerm += self.learningRate * error
+            self.makeCostFunction()
 
 if __name__ == "__main__":
     lr = LinearRegression()
     lr.importCSV("Dataset/Dummy-LR.csv")
     lr.setTarget("MEDV")
     lr.makeParameters()
+    lr.setLearningRate(0.001)
     lr.batchGradientDescent(iterations=5000)
+    print("Weights:", lr.parameters)
+    print("Bias:", lr.getInterceptTerm())
+    print("Final cost:", lr.costFunction)
+
+    lr = LinearRegression()
+    lr.importCSV("Dataset/Dummy-LR.csv")
+    lr.setTarget("MEDV")
+    lr.makeParameters()
+    lr.setLearningRate(0.001)
+    lr.stochasticGradientDescent(epochs=5000)
     print("Weights:", lr.parameters)
     print("Bias:", lr.getInterceptTerm())
     print("Final cost:", lr.costFunction)
